@@ -11,7 +11,9 @@ var (
 	rootCmd = &cobra.Command{
 		Use:   "emaildefense-cli",
 		Short: "Email defense reporting tool.",
-		Long:  `An e-mail defense reporting tool that checks for SPF, DKIM and DMARC.`,
+		Long: `---
+An e-mail defense reporting tool that checks for SPF, DKIM and DMARC.
+---`,
 	}
 )
 
@@ -22,5 +24,5 @@ func Execute() error {
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "domain", "example.org", "the domain that we want to check")
-	rootCmd.PersistentFlags().Bool("viper", true, "use Viper for configuration")
+	// rootCmd.PersistentFlags().Bool("viper", true, "use Viper for configuration")
 }
