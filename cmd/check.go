@@ -83,15 +83,33 @@ var checkCmd = &cobra.Command{
 		// Check for records
 		if len(dmarc.DMARC) > 0 {
 			if dmarc.AuthenticatedData == true {
-				fmt.Printf("%s DMARC lookup DNSSEC validated: %s.\n", green("[+]"), green(spf.AuthenticatedData))
+				fmt.Printf("%s DMARC lookup DNSSEC validated: %s.\n", green("[+]"), green(dmarc.AuthenticatedData))
 			} else {
-				fmt.Printf("%s DMARC lookup DNSSEC validated: %s.\n", yellow("[!]"), yellow(spf.AuthenticatedData))
+				fmt.Printf("%s DMARC lookup DNSSEC validated: %s.\n", yellow("[!]"), yellow(dmarc.AuthenticatedData))
 			}
 			for _, dmarcr := range dmarc.DMARC {
 				fmt.Printf("%s DMARC record: %s.\n", green("[+]"), green(dmarcr))
 			}
 		} else {
 			fmt.Printf("%s No DMARC records found for domain: %s.\n", yellow("[!]"), yellow(domain))
+		}
+
+		fmt.Printf("%s Getting DKIM records for domain %s.\n", blue("[+]"), blue(domain))
+		dkim, err := getDKIM(domain, nameserver)
+		if err != nil {
+			fmt.Printf("%s Error: %s.\n", red("[x]"), red(err))
+		}
+
+		if dkim.AuthenticatedData == true {
+			fmt.Printf("%s DKIM lookup DNSSEC validated: %s.\n", green("[+]"), green(dkim.AuthenticatedData))
+		} else {
+			fmt.Printf("%s DKIM lookup DNSSEC validated: %s.\n", yellow("[!]"), yellow(dkim.AuthenticatedData))
+		}
+
+		if dkim.DomainKey == "Success" {
+			fmt.Printf("%s DKIM lookup: %s.\n", green("[+]"), green(dkim.DomainKey))
+		} else {
+			fmt.Printf("%s DKIM lookup: %s.\n", yellow("[!]"), yellow(dkim.DomainKey))
 		}
 
 		/*
