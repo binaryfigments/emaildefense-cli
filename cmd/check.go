@@ -113,7 +113,7 @@ var checkCmd = &cobra.Command{
 		}
 
 		// --- TLSA ---
-		fmt.Printf("%s Getting TLSA record for MX records of: %s\n", blue("[+]"), blue(domain))
+		fmt.Printf("%s Getting TLSA recorda for MX records of: %s\n", blue("[+]"), blue(domain))
 		if len(mx.MX) > 0 {
 			for _, mxr := range mx.MX {
 				// fmt.Printf("%s MX host %s preference %s.\n", green("[+]"), green(mxr.Mx), green(mxr.Preference))
