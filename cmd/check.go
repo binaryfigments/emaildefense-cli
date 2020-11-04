@@ -112,6 +112,34 @@ var checkCmd = &cobra.Command{
 			fmt.Printf("%s DKIM lookup: %s.\n", yellow("[!]"), yellow(dkim.DomainKey))
 		}
 
+		// --- TLSA ---
+		fmt.Printf("%s Getting TLSA record for MX records of: %s\n", blue("[+]"), blue(domain))
+		if len(mx.MX) > 0 {
+			for _, mxr := range mx.MX {
+				// fmt.Printf("%s MX host %s preference %s.\n", green("[+]"), green(mxr.Mx), green(mxr.Preference))
+				// getTLSA(host string, nameserver string)
+				tlsa, err := getTLSA(mxr.Mx, nameserver)
+				if err != nil {
+					fmt.Printf("%s Error: %s.\n", red("[x]"), red(err))
+					continue
+				}
+				if len(tlsa.TLSA) > 0 {
+					fmt.Printf("%s TLSA record for: %s\n", blue("[+]"), blue(tlsa.Record))
+					if tlsa.AuthenticatedData == true {
+						fmt.Printf("%s TLSA lookup DNSSEC validated: %s.\n", green("[+]"), green(tlsa.AuthenticatedData))
+					} else {
+						fmt.Printf("%s TLSA lookup DNSSEC validated: %s.\n", red("[!]"), red(tlsa.AuthenticatedData))
+					}
+					for _, tlsar := range tlsa.TLSA {
+						// fmt.Printf("%s TLSA record: %s.\n", green("[+]"), green(tlsar))
+
+						fmt.Printf("%s Usage: %s Selector: %s MatchingType: %s\n", green("[+]"), green(tlsar.Usage), green(tlsar.Selector), green(tlsar.MatchingType))
+						fmt.Printf("%s - Certificate: %s\n", green("[+]"), green(tlsar.Certificate))
+					}
+				}
+			}
+		}
+
 		/*
 			json, err := json.MarshalIndent(mx, "", "  ")
 			if err != nil {
