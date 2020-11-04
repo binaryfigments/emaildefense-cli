@@ -188,16 +188,9 @@ func getDKIM(domain string, nameserver string) (*dkimrecords, error) {
 // ------------------------------- TLSA -------------------------
 
 type tlsa struct {
-	Record            string        `json:"record"`
-	AuthenticatedData bool          `json:"authenticated_data"`
-	TLSA              []*tlsarecord `json:"tlsarecord"`
-}
-
-type tlsarecord struct {
-	Usage        uint8  `json:"usage"`
-	Selector     uint8  `json:"selector"`
-	MatchingType uint8  `json:"matchingtype"`
-	Certificate  string `json:"certificate"`
+	Record            string      `json:"record"`
+	AuthenticatedData bool        `json:"authenticated_data"`
+	TLSA              []*dns.TLSA `json:"tlsarecord"`
 }
 
 func getTLSA(host string, nameserver string) (*tlsa, error) {
@@ -224,12 +217,7 @@ func getTLSA(host string, nameserver string) (*tlsa, error) {
 
 	for _, r := range r.Answer {
 		if a, ok := r.(*dns.TLSA); ok {
-			t := new(tlsarecord)
-			t.Certificate = a.Certificate
-			t.MatchingType = a.MatchingType
-			t.Selector = a.Selector
-			t.Usage = a.Usage
-			data.TLSA = append(data.TLSA, t)
+			data.TLSA = append(data.TLSA, a)
 		}
 	}
 
